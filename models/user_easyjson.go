@@ -382,7 +382,182 @@ func (v *NewCredentials) UnmarshalJSON(data []byte) error {
 func (v *NewCredentials) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels2(l, v)
 }
-func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(in *jlexer.Lexer, out *Musician) {
+func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(in *jlexer.Lexer, out *MusicianUpdate) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "email":
+			if in.IsNull() {
+				in.Skip()
+				out.Email = nil
+			} else {
+				if out.Email == nil {
+					out.Email = new(string)
+				}
+				*out.Email = string(in.String())
+			}
+		case "fullName":
+			if in.IsNull() {
+				in.Skip()
+				out.FullName = nil
+			} else {
+				if out.FullName == nil {
+					out.FullName = new(string)
+				}
+				*out.FullName = string(in.String())
+			}
+		case "dateOfBirth":
+			if in.IsNull() {
+				in.Skip()
+				out.DateOfBirth = nil
+			} else {
+				if out.DateOfBirth == nil {
+					out.DateOfBirth = new(string)
+				}
+				*out.DateOfBirth = string(in.String())
+			}
+		case "musicalInstruments":
+			if in.IsNull() {
+				in.Skip()
+				out.MusicalInstruments = nil
+			} else {
+				in.Delim('[')
+				if out.MusicalInstruments == nil {
+					if !in.IsDelim(']') {
+						out.MusicalInstruments = make([]string, 0, 4)
+					} else {
+						out.MusicalInstruments = []string{}
+					}
+				} else {
+					out.MusicalInstruments = (out.MusicalInstruments)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 string
+					v4 = string(in.String())
+					out.MusicalInstruments = append(out.MusicalInstruments, v4)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(out *jwriter.Writer, in MusicianUpdate) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"email\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if in.Email == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Email))
+		}
+	}
+	{
+		const prefix string = ",\"fullName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if in.FullName == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.FullName))
+		}
+	}
+	{
+		const prefix string = ",\"dateOfBirth\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if in.DateOfBirth == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.DateOfBirth))
+		}
+	}
+	{
+		const prefix string = ",\"musicalInstruments\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if in.MusicalInstruments == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v5, v6 := range in.MusicalInstruments {
+				if v5 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v6))
+			}
+			out.RawByte(']')
+		}
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v MusicianUpdate) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v MusicianUpdate) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *MusicianUpdate) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *MusicianUpdate) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(l, v)
+}
+func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(in *jlexer.Lexer, out *Musician) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -435,9 +610,9 @@ func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(in *jlexer.Lexer, 
 					out.MusicalInstruments = (out.MusicalInstruments)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v4 string
-					v4 = string(in.String())
-					out.MusicalInstruments = append(out.MusicalInstruments, v4)
+					var v7 string
+					v7 = string(in.String())
+					out.MusicalInstruments = append(out.MusicalInstruments, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -452,7 +627,7 @@ func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(in *jlexer.Lexer, 
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(out *jwriter.Writer, in Musician) {
+func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(out *jwriter.Writer, in Musician) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -522,11 +697,11 @@ func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(out *jwriter.Write
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.MusicalInstruments {
-				if v5 > 0 {
+			for v8, v9 := range in.MusicalInstruments {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v6))
+				out.String(string(v9))
 			}
 			out.RawByte(']')
 		}
@@ -537,27 +712,27 @@ func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(out *jwriter.Write
 // MarshalJSON supports json.Marshaler interface
 func (v Musician) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(&w, v)
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Musician) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels3(w, v)
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Musician) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(&r, v)
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Musician) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels3(l, v)
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(l, v)
 }
-func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(in *jlexer.Lexer, out *AuthCredentials) {
+func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels5(in *jlexer.Lexer, out *AuthCredentials) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -590,7 +765,7 @@ func easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(in *jlexer.Lexer, 
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(out *jwriter.Writer, in AuthCredentials) {
+func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels5(out *jwriter.Writer, in AuthCredentials) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -620,23 +795,23 @@ func easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(out *jwriter.Write
 // MarshalJSON supports json.Marshaler interface
 func (v AuthCredentials) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(&w, v)
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels5(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AuthCredentials) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels4(w, v)
+	easyjson9e1087fdEncodeGithubComSimpleMusicGatewayModels5(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AuthCredentials) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(&r, v)
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels5(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AuthCredentials) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels4(l, v)
+	easyjson9e1087fdDecodeGithubComSimpleMusicGatewayModels5(l, v)
 }

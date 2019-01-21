@@ -2,8 +2,12 @@ package models
 
 //go:generate easyjson
 
-import (
-	"github.com/simple-music/gateway/errs"
+const (
+	UsernamePattern   = `^\w+$`
+	EmailPattern      = `^.+@.+$`
+	FullNamePattern   = `^((\w)+ ?)+$`
+	DatePattern       = `^\d{4}-\d{2}-\d{2}$`
+	PasswordMinLength = 8
 )
 
 //easyjson:json
@@ -12,10 +16,6 @@ type NewUser struct {
 	Password string `json:"password"`
 	Email    string `json:"email"`
 	FullName string `json:"fullName"`
-}
-
-func (v *NewUser) Validate() *errs.Error {
-	panic(nil) //TODO
 }
 
 //easyjson:json
@@ -39,6 +39,14 @@ type Musician struct {
 	Nickname           string   `json:"nickname"`
 	Email              string   `json:"email"`
 	FullName           string   `json:"fullName"`
+	DateOfBirth        *string  `json:"dateOfBirth"`
+	MusicalInstruments []string `json:"musicalInstruments"`
+}
+
+//easyjson:json
+type MusicianUpdate struct {
+	Email              *string  `json:"email"`
+	FullName           *string  `json:"fullName"`
 	DateOfBirth        *string  `json:"dateOfBirth"`
 	MusicalInstruments []string `json:"musicalInstruments"`
 }
