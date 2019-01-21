@@ -18,6 +18,9 @@ var (
 	MusiciansServiceID       = env.GetVar("SIMPLE_MUSIC_MUSICIANS_SERVICE_ID", "musicians")
 	MusiciansServicePassword = env.GetVar("SIMPLE_MUSIC_MUSICIANS_SERVICE_PASSWORD", "secret")
 
+	SubscriptionsServiceID       = env.GetVar("SIMPLE_MUSIC_SUBSCRIPTIONS_SERVICE_ID", "subscriptions")
+	SubscriptionsServicePassword = env.GetVar("SIMPLE_MUSIC_SUBSCRIPTIONS_SERVICE_PASSWORD", "secret")
+
 	AvatarsServiceID       = env.GetVar("SIMPLE_MUSIC_AVATARS_SERVICE_ID", "avatars")
 	AvatarsServicePassword = env.GetVar("SIMPLE_MUSIC_AVATARS_SERVICE_ID", "secret")
 )
