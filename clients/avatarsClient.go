@@ -6,10 +6,16 @@ import (
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
+	"net/http"
+)
+
+const (
+	AvatarNotFoundErrMessage = "avatar not found"
 )
 
 type AvatarsClient struct {
-	client *utils.RestClient
+	client      *utils.RestClient
+	notFoundErr *errs.Error
 }
 
 func NewAvatarsClient() *AvatarsClient {
@@ -23,6 +29,7 @@ func NewAvatarsClient() *AvatarsClient {
 				DiscoveryClient: common.DiscoveryClient,
 			},
 		),
+		notFoundErr: errs.NewError(errs.NotFound, AvatarNotFoundErrMessage),
 	}
 }
 
@@ -30,23 +37,47 @@ func (c *AvatarsClient) AddAvatar(user string, content []byte) *errs.Error {
 	req := fasthttp.AcquireRequest()
 	path := fmt.Sprintf("/avatars/%s", user)
 
-	req.AppendBody(content)
+	req.Header.SetMethod(http.MethodPost)
 	req.Header.SetContentType("image/jpeg")
+	req.AppendBody(content)
 
 	resp, err := c.client.PerformRequest(req, path)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(resp) //TODO
+	if resp.StatusCode() != http.StatusOK {
+		return c.wrapErr(resp)
+	}
 
 	return nil
 }
 
 func (c *AvatarsClient) GetAvatar(user string) ([]byte, *errs.Error) {
-	panic("not implemented") //TODO
+	req := fasthttp.AcquireRequest()
+	path := fmt.Sprintf("/avatars/%s", user)
+
+	req.Header.SetMethod(http.MethodGet)
+
+	resp, err := c.client.PerformRequest(req, path)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode() == http.StatusNotFound {
+		return nil, c.notFoundErr
+	} else if resp.StatusCode() != http.StatusOK {
+		return nil, c.wrapErr(resp)
+	}
+
+	return resp.Body(), nil
 }
 
 func (c *AvatarsClient) DeleteAvatar(user string) *errs.Error {
 	panic("not implemented") //TODO
+}
+
+func (c *AvatarsClient) wrapErr(resp *fasthttp.Response) *errs.Error {
+	err := fmt.Errorf("unexpected response: %v", resp)
+	return errs.NewServiceError(err)
 }

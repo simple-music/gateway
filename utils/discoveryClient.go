@@ -45,7 +45,9 @@ func (c *DiscoveryClient) ResolveName(name string) (string, *errs.Error) {
 
 	for _, srv := range srvList {
 		if srv.Service == name {
-			return fmt.Sprintf("%s:%d", srv.Address, srv.Port), nil
+			address := fmt.Sprintf("%s:%d", srv.Address, srv.Port)
+			c.components.Logger.Info(fmt.Sprintf("Resolved %s to %s", name, address))
+			return address, nil
 		}
 	}
 
