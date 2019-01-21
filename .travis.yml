@@ -1,0 +1,20 @@
+language: go
+go:
+  - "1.11"
+
+env:
+  - GO111MODULE=on
+
+install: true
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - go build --mod=vendor .
+
+    - stage: build image
+      services:
+        - docker
+      script:
+        - docker build -t simple-music/gateway .
