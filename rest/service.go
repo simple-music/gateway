@@ -2,39 +2,30 @@ package rest
 
 import (
 	"github.com/fasthttp/router"
+	"github.com/simple-music/gateway/clients"
+	"github.com/simple-music/gateway/common"
 	"github.com/simple-music/gateway/config"
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/logs"
 	"github.com/valyala/fasthttp"
 )
 
-type ServiceConfig struct {
-	Host string
-	Port string
-}
-
-type ServiceComponents struct {
-	Logger *logs.Logger
-}
-
 type Service struct {
-	config     ServiceConfig
-	components ServiceComponents
 	handler    fasthttp.RequestHandler
-
+	logger     *logs.Logger
 	reqBodyErr *errs.Error
+
+	avatarsClient *clients.AvatarsClient
 }
 
-func NewService(cf ServiceConfig, cp ServiceComponents) *Service {
-	cf.Host, cf.Port = config.ServiceHost, config.ServicePort
-
+func NewService() *Service {
 	srv := &Service{
-		config:     cf,
-		components: cp,
-
+		logger: common.Logger,
 		reqBodyErr: errs.NewError(
 			errs.InvalidFormat, "invalid request body",
 		),
+
+		avatarsClient: clients.NewAvatarsClient(),
 	}
 
 	r := router.New()
@@ -54,9 +45,9 @@ func NewService(cf ServiceConfig, cp ServiceComponents) *Service {
 	r.POST("/users/:user/subscribers/:subscriber", nil)
 	r.DELETE("/users/:user/subscribers/:subscriber", nil)
 
-	r.POST("/users/:user/avatar", nil)
-	r.GET("/users/:user/avatar", nil)
-	r.DELETE("/users/:user/avatar", nil)
+	r.POST("/users/:user/avatar", srv.addAvatar)
+	r.GET("/users/:user/avatar", srv.getAvatar)
+	r.DELETE("/users/:user/avatar", srv.deleteAvatar)
 
 	r.GET("/users/:user/compositions", nil)
 	r.POST("/users/:user/compositions/:composition", nil)
@@ -68,15 +59,11 @@ func NewService(cf ServiceConfig, cp ServiceComponents) *Service {
 }
 
 func (srv *Service) Run() error {
-	addr := srv.config.Host + ":" + srv.config.Port
-	srv.Logger().Info("starting service on " + addr)
+	addr := config.ServiceHost + ":" + config.ServicePort
+	srv.logger.Info("starting service on " + addr)
 	return fasthttp.ListenAndServe(addr, srv.handler)
 }
 
 func (srv *Service) Shutdown() error {
 	return nil //TODO
-}
-
-func (srv *Service) Logger() *logs.Logger {
-	return srv.components.Logger
 }
