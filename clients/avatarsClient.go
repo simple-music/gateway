@@ -3,6 +3,7 @@ package clients
 import (
 	"fmt"
 	"github.com/simple-music/gateway/common"
+	"github.com/simple-music/gateway/config"
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
@@ -22,7 +23,9 @@ func NewAvatarsClient() *AvatarsClient {
 	return &AvatarsClient{
 		client: utils.NewRestClient(
 			utils.RestClientConfig{
-				ServiceName: "avatars-service",
+				ServiceName:     "avatars-service",
+				ServiceID:       config.AvatarsServiceID,
+				ServicePassword: config.AvatarsServicePassword,
 			},
 			utils.RestClientComponents{
 				Logger:          common.Logger,
