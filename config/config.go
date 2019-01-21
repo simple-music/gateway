@@ -12,6 +12,9 @@ var (
 	DiscoveryHost = env.GetVar("SIMPLE_MUSIC_CONSUL_HOST", "127.0.0.1")
 	DiscoveryPort = env.GetVar("SIMPLE_MUSIC_CONSUL_PORT", "8500")
 
+	AuthServiceID       = env.GetVar("SIMPLE_MUSIC_AUTH_SERVICE_ID", "auth")
+	AuthServicePassword = env.GetVar("SIMPLE_MUSIC_AUTH_SERVICE_PASSWORD", "secret")
+
 	AvatarsServiceID       = env.GetVar("SIMPLE_MUSIC_AVATARS_SERVICE_ID", "avatars")
 	AvatarsServicePassword = env.GetVar("SIMPLE_MUSIC_AVATARS_SERVICE_ID", "secret")
 )
