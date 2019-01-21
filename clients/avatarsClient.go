@@ -77,5 +77,21 @@ func (c *AvatarsClient) GetAvatar(user string) ([]byte, *errs.Error) {
 }
 
 func (c *AvatarsClient) DeleteAvatar(user string) *errs.Error {
-	panic("not implemented") //TODO
+	req := fasthttp.AcquireRequest()
+	path := fmt.Sprintf("/avatars/%s", user)
+
+	req.Header.SetMethod(http.MethodDelete)
+
+	resp, err := c.client.PerformRequest(req, path)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode() == http.StatusNotFound {
+		return c.notFoundErr
+	} else if resp.StatusCode() != http.StatusOK {
+		return utils.WrapUnexpectedResponse(resp)
+	}
+
+	return nil
 }
