@@ -50,7 +50,7 @@ func (c *AvatarsClient) AddAvatar(user string, content []byte) *errs.Error {
 	}
 
 	if resp.StatusCode() != http.StatusOK {
-		return c.wrapErr(resp)
+		return utils.WrapUnexpectedResponse(resp)
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (c *AvatarsClient) GetAvatar(user string) ([]byte, *errs.Error) {
 	if resp.StatusCode() == http.StatusNotFound {
 		return nil, c.notFoundErr
 	} else if resp.StatusCode() != http.StatusOK {
-		return nil, c.wrapErr(resp)
+		return nil, utils.WrapUnexpectedResponse(resp)
 	}
 
 	return resp.Body(), nil
@@ -78,9 +78,4 @@ func (c *AvatarsClient) GetAvatar(user string) ([]byte, *errs.Error) {
 
 func (c *AvatarsClient) DeleteAvatar(user string) *errs.Error {
 	panic("not implemented") //TODO
-}
-
-func (c *AvatarsClient) wrapErr(resp *fasthttp.Response) *errs.Error {
-	err := fmt.Errorf("unexpected response: %v", resp)
-	return errs.NewServiceError(err)
 }
