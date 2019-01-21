@@ -41,7 +41,7 @@ const (
 )
 
 func NewServiceError(err error) *Error {
-	sErr := NewError(InternalError, err.Error())
+	sErr := NewError(InternalError, InternalErrorMessage)
 	sErr.NestedErr = err
 	return sErr
 }
