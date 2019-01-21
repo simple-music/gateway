@@ -22,7 +22,7 @@ type Service struct {
 	components ServiceComponents
 	handler    fasthttp.RequestHandler
 
-	parseBodyErr *errs.Error
+	reqBodyErr *errs.Error
 }
 
 func NewService(cf ServiceConfig, cp ServiceComponents) *Service {
@@ -32,7 +32,9 @@ func NewService(cf ServiceConfig, cp ServiceComponents) *Service {
 		config:     cf,
 		components: cp,
 
-		parseBodyErr: errs.NewError(errs.InvalidFormat, "invalid request body"),
+		reqBodyErr: errs.NewError(
+			errs.InvalidFormat, "invalid request body",
+		),
 	}
 
 	r := router.New()
