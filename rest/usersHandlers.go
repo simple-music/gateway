@@ -86,6 +86,12 @@ func (srv *Service) getUser(ctx *fasthttp.RequestCtx) {
 func (srv *Service) updateUser(ctx *fasthttp.RequestCtx) {
 	id := ctx.UserValue("user").(string)
 
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != id {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
+
 	var update models.MusicianUpdate
 	if err := srv.ReadBody(ctx, &update); err != nil {
 		srv.WriteError(ctx, err)
@@ -104,6 +110,12 @@ func (srv *Service) updateUser(ctx *fasthttp.RequestCtx) {
 
 func (srv *Service) deleteUser(ctx *fasthttp.RequestCtx) {
 	id := ctx.UserValue("user").(string)
+
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != id {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
 
 	if err := srv.musiciansClient.DeleteMusician(id, true); err != nil {
 		srv.WriteError(ctx, err)

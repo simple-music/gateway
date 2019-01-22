@@ -9,6 +9,12 @@ func (srv *Service) addAvatar(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(string)
 	content := ctx.Request.Body()
 
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != user {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
+
 	var musician models.Musician
 	if err := srv.musiciansClient.GetMusician(user, &musician); err != nil {
 		srv.WriteError(ctx, err)
@@ -40,6 +46,12 @@ func (srv *Service) getAvatar(ctx *fasthttp.RequestCtx) {
 
 func (srv *Service) deleteAvatar(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(string)
+
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != user {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
 
 	if err := srv.avatarsClient.DeleteAvatar(user); err != nil {
 		srv.WriteError(ctx, err)

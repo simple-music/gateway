@@ -17,8 +17,9 @@ type Service struct {
 	logger       *logs.Logger
 	tokenManager *utils.TokenManager
 
-	reqBodyErr   *errs.Error
-	authTokenErr *errs.Error
+	reqBodyErr    *errs.Error
+	authTokenErr  *errs.Error
+	permissionErr *errs.Error
 
 	authClient          *clients.AuthClient
 	musiciansClient     *clients.MusiciansClient
@@ -35,6 +36,9 @@ func NewService() *Service {
 		),
 		authTokenErr: errs.NewError(
 			errs.BadRequest, "invalid authorization token",
+		),
+		permissionErr: errs.NewError(
+			errs.PermissionDenied, "permission denied",
 		),
 
 		authClient:          clients.NewAuthClient(),

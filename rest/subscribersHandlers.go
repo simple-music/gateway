@@ -9,6 +9,12 @@ func (srv *Service) addSubscription(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(string)
 	subscription := ctx.UserValue("subscription").(string)
 
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != user {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
+
 	var musician models.Musician
 	if err := srv.musiciansClient.GetMusician(user, &musician); err != nil {
 		srv.WriteError(ctx, err)
@@ -30,6 +36,12 @@ func (srv *Service) addSubscription(ctx *fasthttp.RequestCtx) {
 func (srv *Service) deleteSubscription(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(string)
 	subscription := ctx.UserValue("subscription").(string)
+
+	authID := string(ctx.Request.Header.Peek("X-User-ID"))
+	if authID != user {
+		srv.WriteError(ctx, srv.permissionErr)
+		return
+	}
 
 	if err := srv.subscriptionsClient.DeleteSubscription(user, subscription); err != nil {
 		srv.WriteError(ctx, err)
