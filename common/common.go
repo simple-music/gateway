@@ -16,6 +16,7 @@ func init() {
 	Logger = logs.NewLogger()
 
 	TaskQueue = utils.NewTaskQueue(Logger)
+	TaskQueue.Run()
 
 	DiscoveryClient = utils.NewDiscoveryClient(
 		utils.DiscoveryClientConfig{

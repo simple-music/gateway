@@ -11,10 +11,11 @@ const (
 	QueueTickInterval = time.Second
 )
 
-type TaskFunc func() bool
+type TaskFunc func(...interface{}) bool
 
 type Task struct {
 	TaskFunc TaskFunc
+	TaskArgs []interface{}
 }
 
 type TaskQueue struct {
@@ -40,7 +41,7 @@ func (q *TaskQueue) Run() {
 
 			index := 0
 			for index < len(q.tasks) {
-				if q.tasks[index].TaskFunc() {
+				if q.tasks[index].TaskFunc(q.tasks[index].TaskArgs...) {
 					q.tasks = append(q.tasks[:index], q.tasks[index+1:]...)
 				}
 				index++

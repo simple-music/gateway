@@ -123,44 +123,44 @@ func (srv *Service) deleteUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	srv.taskQueue.AddTask(func() *utils.Task {
-		return &utils.Task{
-			TaskFunc: func() bool {
-				err := srv.authClient.DeleteCredentials(id)
-				if err.Type == errs.InternalError {
-					srv.logger.Error(err.NestedErr)
-					return false
-				}
-				return true
-			},
-		}
-	}())
+	srv.taskQueue.AddTask(&utils.Task{
+		TaskFunc: func(args ...interface{}) bool {
+			id := args[0].(string)
+			err := srv.authClient.DeleteCredentials(id)
+			if err.Type == errs.InternalError {
+				srv.logger.Error(err.NestedErr)
+				return false
+			}
+			return true
+		},
+		TaskArgs: []interface{}{id},
+	})
 
-	srv.taskQueue.AddTask(func() *utils.Task {
-		return &utils.Task{
-			TaskFunc: func() bool {
-				err := srv.subscriptionsClient.DeleteUser(id)
-				if err.Type == errs.InternalError {
-					srv.logger.Error(err.NestedErr)
-					return false
-				}
-				return true
-			},
-		}
-	}())
+	srv.taskQueue.AddTask(&utils.Task{
+		TaskFunc: func(args ...interface{}) bool {
+			id := args[0].(string)
+			err := srv.subscriptionsClient.DeleteUser(id)
+			if err.Type == errs.InternalError {
+				srv.logger.Error(err.NestedErr)
+				return false
+			}
+			return true
+		},
+		TaskArgs: []interface{}{id},
+	})
 
-	srv.taskQueue.AddTask(func() *utils.Task {
-		return &utils.Task{
-			TaskFunc: func() bool {
-				err := srv.avatarsClient.DeleteAvatar(id)
-				if err.Type == errs.InternalError {
-					srv.logger.Error(err.NestedErr)
-					return false
-				}
-				return true
-			},
-		}
-	}())
+	srv.taskQueue.AddTask(&utils.Task{
+		TaskFunc: func(args ...interface{}) bool {
+			id := args[0].(string)
+			err := srv.avatarsClient.DeleteAvatar(id)
+			if err.Type == errs.InternalError {
+				srv.logger.Error(err.NestedErr)
+				return false
+			}
+			return true
+		},
+		TaskArgs: []interface{}{id},
+	})
 
 	ctx.SetStatusCode(fasthttp.StatusNoContent)
 }
