@@ -9,7 +9,7 @@ import (
 const (
 	NotFound = iota
 	InvalidFormat
-	ConstraintViolation
+	BadRequest
 	Conflict
 	NotAuthorized
 	PermissionDenied

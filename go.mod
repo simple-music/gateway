@@ -1,6 +1,7 @@
 module github.com/simple-music/gateway
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fasthttp/router v0.3.2
 	github.com/hashicorp/consul v1.4.0
 	github.com/hashicorp/go-cleanhttp v0.5.0 // indirect

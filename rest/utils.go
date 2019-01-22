@@ -30,6 +30,8 @@ func (srv *Service) WriteError(ctx *fasthttp.RequestCtx, err *errs.Error) {
 	switch err.Type {
 	case errs.NotFound:
 		status = fasthttp.StatusNotFound
+	case errs.BadRequest:
+		status = fasthttp.StatusBadRequest
 	case errs.Conflict:
 		status = fasthttp.StatusConflict
 	case errs.InvalidFormat:

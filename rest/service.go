@@ -7,15 +7,18 @@ import (
 	"github.com/simple-music/gateway/config"
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/logs"
+	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
 )
 
 type Service struct {
 	handler fasthttp.RequestHandler
 
-	logger *logs.Logger
+	logger       *logs.Logger
+	tokenManager *utils.TokenManager
 
-	reqBodyErr *errs.Error
+	reqBodyErr   *errs.Error
+	authTokenErr *errs.Error
 
 	authClient          *clients.AuthClient
 	musiciansClient     *clients.MusiciansClient
@@ -26,14 +29,20 @@ type Service struct {
 func NewService() *Service {
 	srv := &Service{
 		logger: common.Logger,
+
 		reqBodyErr: errs.NewError(
 			errs.InvalidFormat, "invalid request body",
+		),
+		authTokenErr: errs.NewError(
+			errs.BadRequest, "invalid authorization token",
 		),
 
 		authClient:          clients.NewAuthClient(),
 		musiciansClient:     clients.NewMusiciansClient(),
 		subscriptionsClient: clients.NewSubscriptionsClient(),
 		avatarsClient:       clients.NewAvatarsClient(),
+
+		tokenManager: utils.NewTokenManager(),
 	}
 
 	r := router.New()
@@ -41,21 +50,21 @@ func NewService() *Service {
 	r.POST("/users", srv.addUser)
 	r.GET("/users", srv.findUser)
 	r.GET("/users/:user", srv.getUser)
-	r.PATCH("/users/:user", srv.updateUser)
-	r.DELETE("/users/:user", srv.deleteUser)
+	r.PATCH("/users/:user", srv.WithAuth(srv.updateUser))
+	r.DELETE("/users/:user", srv.WithAuth(srv.deleteUser))
 
 	r.POST("/auth/session", srv.startSession)
-	r.PATCH("/auth/session", srv.refreshSession)
-	r.DELETE("/auth/session", srv.deleteSession)
+	r.PATCH("/auth/session", srv.WithAuth(srv.refreshSession))
+	r.DELETE("/auth/session", srv.WithAuth(srv.deleteSession))
 
 	r.GET("/users/:user/subscribers", srv.getSubscribers)
 	r.GET("/users/:user/subscriptions", srv.getSubscriptions)
-	r.POST("/users/:user/subscriptions/:subscription", srv.addSubscription)
-	r.DELETE("/users/:user/subscriptions/:subscription", srv.deleteSubscription)
+	r.POST("/users/:user/subscriptions/:subscription", srv.WithAuth(srv.addSubscription))
+	r.DELETE("/users/:user/subscriptions/:subscription", srv.WithAuth(srv.deleteSubscription))
 
-	r.POST("/users/:user/avatar", srv.addAvatar)
+	r.POST("/users/:user/avatar", srv.WithAuth(srv.addAvatar))
 	r.GET("/users/:user/avatar", srv.getAvatar)
-	r.DELETE("/users/:user/avatar", srv.deleteAvatar)
+	r.DELETE("/users/:user/avatar", srv.WithAuth(srv.deleteAvatar))
 
 	srv.handler = r.Handler
 	return srv
