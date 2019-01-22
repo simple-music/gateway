@@ -108,6 +108,8 @@ func easyjsonFfbd3743DecodeGithubComSimpleMusicGatewayModels1(in *jlexer.Lexer, 
 			out.Username = string(in.String())
 		case "email":
 			out.Email = string(in.String())
+		case "fullName":
+			out.FullName = string(in.String())
 		case "dateOfBirth":
 			if in.IsNull() {
 				in.Skip()
@@ -188,6 +190,16 @@ func easyjsonFfbd3743EncodeGithubComSimpleMusicGatewayModels1(out *jwriter.Write
 			out.RawString(prefix)
 		}
 		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"fullName\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.FullName))
 	}
 	{
 		const prefix string = ",\"dateOfBirth\":"
