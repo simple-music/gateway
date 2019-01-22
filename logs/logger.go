@@ -21,7 +21,7 @@ func (log *Logger) Info(args ...interface{}) {
 }
 
 func (log *Logger) Error(args ...interface{}) {
-	log.withStackTrace(log.logger.Error, args)
+	log.logger.Error(args...)
 }
 
 func (log *Logger) Fatal(args ...interface{}) {

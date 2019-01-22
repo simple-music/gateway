@@ -3,6 +3,7 @@ package rest
 import (
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/models"
+	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
 )
 
@@ -122,11 +123,44 @@ func (srv *Service) deleteUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	//TODO queue
+	srv.taskQueue.AddTask(func() *utils.Task {
+		return &utils.Task{
+			TaskFunc: func() bool {
+				err := srv.authClient.DeleteCredentials(id)
+				if err.Type == errs.InternalError {
+					srv.logger.Error(err.NestedErr)
+					return false
+				}
+				return true
+			},
+		}
+	}())
 
-	_ = srv.authClient.DeleteCredentials(id)
-	_ = srv.subscriptionsClient.DeleteUser(id)
-	_ = srv.avatarsClient.DeleteAvatar(id)
+	srv.taskQueue.AddTask(func() *utils.Task {
+		return &utils.Task{
+			TaskFunc: func() bool {
+				err := srv.subscriptionsClient.DeleteUser(id)
+				if err.Type == errs.InternalError {
+					srv.logger.Error(err.NestedErr)
+					return false
+				}
+				return true
+			},
+		}
+	}())
+
+	srv.taskQueue.AddTask(func() *utils.Task {
+		return &utils.Task{
+			TaskFunc: func() bool {
+				err := srv.avatarsClient.DeleteAvatar(id)
+				if err.Type == errs.InternalError {
+					srv.logger.Error(err.NestedErr)
+					return false
+				}
+				return true
+			},
+		}
+	}())
 
 	ctx.SetStatusCode(fasthttp.StatusNoContent)
 }

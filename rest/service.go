@@ -14,7 +14,9 @@ import (
 type Service struct {
 	handler fasthttp.RequestHandler
 
-	logger       *logs.Logger
+	logger *logs.Logger
+
+	taskQueue    *utils.TaskQueue
 	tokenManager *utils.TokenManager
 
 	reqBodyErr    *errs.Error
@@ -46,6 +48,7 @@ func NewService() *Service {
 		subscriptionsClient: clients.NewSubscriptionsClient(),
 		avatarsClient:       clients.NewAvatarsClient(),
 
+		taskQueue:    common.TaskQueue,
 		tokenManager: utils.NewTokenManager(),
 	}
 
