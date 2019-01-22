@@ -8,11 +8,14 @@ import (
 
 var (
 	Logger          *logs.Logger
+	TaskQueue       *utils.TaskQueue
 	DiscoveryClient *utils.DiscoveryClient
 )
 
 func init() {
 	Logger = logs.NewLogger()
+
+	TaskQueue = utils.NewTaskQueue(Logger)
 
 	DiscoveryClient = utils.NewDiscoveryClient(
 		utils.DiscoveryClientConfig{

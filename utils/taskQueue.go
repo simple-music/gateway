@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"github.com/simple-music/gateway/logs"
 	"sync"
 	"time"
 )
@@ -21,13 +23,15 @@ type TaskQueue struct {
 	tasks  []*Task
 	ticker *time.Ticker
 	mutex  *sync.Mutex
+	logger *logs.Logger
 }
 
-func NewTaskQueue() *TaskQueue {
+func NewTaskQueue(logger *logs.Logger) *TaskQueue {
 	return &TaskQueue{
 		tasks:  make([]*Task, 0),
 		ticker: time.NewTicker(QueueTickInterval),
 		mutex:  &sync.Mutex{},
+		logger: logger,
 	}
 }
 
@@ -40,8 +44,14 @@ func (q *TaskQueue) Run() {
 			for index < len(q.tasks) {
 				q.tasks[index].TaskFunc()
 				if q.tasks[index].CompleteFunc() {
-					q.tasks = append(q.tasks[:index], q.tasks[index:]...)
+					q.tasks = append(q.tasks[:index], q.tasks[index+1:]...)
 				}
+				index++
+			}
+
+			n := len(q.tasks)
+			if n > 0 {
+				q.logger.Info(fmt.Sprintf("Task queue not empty. Length: %d", n))
 			}
 
 			q.mutex.Unlock()
