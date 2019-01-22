@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"github.com/simple-music/gateway/config"
 	"github.com/simple-music/gateway/consts"
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/logs"
@@ -25,7 +26,10 @@ type DiscoveryClient struct {
 }
 
 func NewDiscoveryClient(conf DiscoveryClientConfig, comp DiscoveryClientComponents) *DiscoveryClient {
-	client, err := api.NewClient(api.DefaultConfig())
+	apiConfig := api.DefaultConfig()
+	apiConfig.Address = config.DiscoveryHost + ":" + config.DiscoveryPort
+
+	client, err := api.NewClient(apiConfig)
 	if err != nil {
 		panic(err)
 	}
