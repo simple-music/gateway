@@ -44,9 +44,9 @@ func NewService() *Service {
 	r.PATCH("/users/:user", srv.updateUser)
 	r.DELETE("/users/:user", srv.deleteUser)
 
-	r.POST("/auth/session", nil)
-	r.PATCH("/auth/session", nil)
-	r.DELETE("/auth/session", nil)
+	r.POST("/auth/session", srv.startSession)
+	r.PATCH("/auth/session", srv.refreshSession)
+	r.DELETE("/auth/session", srv.deleteSession)
 
 	r.GET("/users/:user/subscribers", srv.getSubscribers)
 	r.GET("/users/:user/subscriptions", srv.getSubscriptions)
