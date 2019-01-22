@@ -151,7 +151,7 @@ func (c *SubscriptionsClient) DeleteUser(user string) *errs.Error {
 
 	if resp.StatusCode() == http.StatusNotFound {
 		return c.notFoundErr
-	} else if resp.StatusCode() != http.StatusOK {
+	} else if resp.StatusCode() != http.StatusNoContent {
 		return utils.WrapUnexpectedResponse(resp)
 	}
 

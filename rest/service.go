@@ -39,10 +39,10 @@ func NewService() *Service {
 	r := router.New()
 
 	r.POST("/users", srv.addUser)
-	r.GET("/users", nil)
-	r.GET("/users/:user", nil)
-	r.PATCH("/users/:user", nil)
-	r.DELETE("/users/:user", nil)
+	r.GET("/users", srv.findUser)
+	r.GET("/users/:user", srv.getUser)
+	r.PATCH("/users/:user", srv.updateUser)
+	r.DELETE("/users/:user", srv.deleteUser)
 
 	r.POST("/auth/session", nil)
 	r.PATCH("/auth/session", nil)
