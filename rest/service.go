@@ -7,6 +7,7 @@ import (
 	"github.com/simple-music/gateway/config"
 	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/logs"
+	"github.com/simple-music/gateway/models"
 	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
 )
@@ -22,6 +23,9 @@ type Service struct {
 	reqBodyErr    *errs.Error
 	authTokenErr  *errs.Error
 	permissionErr *errs.Error
+
+	newUserValidator        *models.NewUserValidator
+	musicianUpdateValidator *models.MusicianUpdateValidator
 
 	authClient          *clients.AuthClient
 	musiciansClient     *clients.MusiciansClient
@@ -42,6 +46,9 @@ func NewService() *Service {
 		permissionErr: errs.NewError(
 			errs.PermissionDenied, "permission denied",
 		),
+
+		newUserValidator:        models.NewNewUserValidator(),
+		musicianUpdateValidator: models.NewMusicianUpdateValidator(),
 
 		authClient:          clients.NewAuthClient(),
 		musiciansClient:     clients.NewMusiciansClient(),

@@ -12,8 +12,6 @@ func (srv *Service) startSession(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	//TODO validation
-
 	content, err := srv.authClient.StartSession(&authCredentials)
 	if err != nil {
 		srv.WriteError(ctx, err)

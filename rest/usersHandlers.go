@@ -14,7 +14,10 @@ func (srv *Service) addUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	//TODO validation
+	if err := srv.newUserValidator.Validate(&newUser); err != nil {
+		srv.WriteError(ctx, err)
+		return
+	}
 
 	var newMusician models.NewMusician
 	newMusician.From(&newUser)
@@ -99,7 +102,10 @@ func (srv *Service) updateUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	//TODO validation
+	if err := srv.musicianUpdateValidator.Validate(&update); err != nil {
+		srv.WriteError(ctx, err)
+		return
+	}
 
 	if err := srv.musiciansClient.UpdateMusician(id, &update); err != nil {
 		srv.WriteError(ctx, err)
