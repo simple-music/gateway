@@ -67,7 +67,9 @@ func (c *SubscriptionsClient) DeleteSubscription(user string, subscription strin
 		return err
 	}
 
-	if resp.StatusCode() != http.StatusOK {
+	if resp.StatusCode() == http.StatusNotFound {
+		return c.notFoundErr
+	} else if resp.StatusCode() != http.StatusNoContent {
 		return utils.WrapUnexpectedResponse(resp)
 	}
 
@@ -98,11 +100,14 @@ func (c *SubscriptionsClient) GetStatus(user string, status *models.Subscription
 	return nil
 }
 
-func (c *SubscriptionsClient) GetSubscribers(user string, pageIndex, pageSize int32) ([]byte, *errs.Error) {
+func (c *SubscriptionsClient) GetSubscribers(user string, pageIndex, pageSize int) ([]byte, *errs.Error) {
 	req := fasthttp.AcquireRequest()
 	req.Header.SetMethod(http.MethodGet)
 
-	path := fmt.Sprintf("/users/%s/subscribers?page=%d&psize=%d", user, pageIndex, pageSize)
+	path := fmt.Sprintf("/users/%s/subscribers?page=%d", user, pageIndex)
+	if pageSize != 0 {
+		path += fmt.Sprintf("&size=%d", pageSize)
+	}
 
 	resp, err := c.client.PerformRequest(req, path)
 	if err != nil {
@@ -118,11 +123,14 @@ func (c *SubscriptionsClient) GetSubscribers(user string, pageIndex, pageSize in
 	return resp.Body(), nil
 }
 
-func (c *SubscriptionsClient) GetSubscriptions(user string, pageIndex, pageSize int32) ([]byte, *errs.Error) {
+func (c *SubscriptionsClient) GetSubscriptions(user string, pageIndex, pageSize int) ([]byte, *errs.Error) {
 	req := fasthttp.AcquireRequest()
 	req.Header.SetMethod(http.MethodGet)
 
-	path := fmt.Sprintf("/users/%s/subscriptions?page=%d&psize=%d", user, pageIndex, pageSize)
+	path := fmt.Sprintf("/users/%s/subscriptions?page=%d", user, pageIndex)
+	if pageSize != 0 {
+		path += fmt.Sprintf("&size=%d", pageSize)
+	}
 
 	resp, err := c.client.PerformRequest(req, path)
 	if err != nil {
