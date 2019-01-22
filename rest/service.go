@@ -84,5 +84,5 @@ func (srv *Service) Run() error {
 }
 
 func (srv *Service) Shutdown() error {
-	return nil //TODO
+	return nil
 }
