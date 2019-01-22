@@ -11,11 +11,16 @@ import (
 )
 
 type Service struct {
-	handler    fasthttp.RequestHandler
-	logger     *logs.Logger
+	handler fasthttp.RequestHandler
+
+	logger *logs.Logger
+
 	reqBodyErr *errs.Error
 
-	avatarsClient *clients.AvatarsClient
+	authClient          *clients.AuthClient
+	musiciansClient     *clients.MusiciansClient
+	subscriptionsClient *clients.SubscriptionsClient
+	avatarsClient       *clients.AvatarsClient
 }
 
 func NewService() *Service {
@@ -25,7 +30,10 @@ func NewService() *Service {
 			errs.InvalidFormat, "invalid request body",
 		),
 
-		avatarsClient: clients.NewAvatarsClient(),
+		authClient:          clients.NewAuthClient(),
+		musiciansClient:     clients.NewMusiciansClient(),
+		subscriptionsClient: clients.NewSubscriptionsClient(),
+		avatarsClient:       clients.NewAvatarsClient(),
 	}
 
 	r := router.New()
@@ -48,11 +56,6 @@ func NewService() *Service {
 	r.POST("/users/:user/avatar", srv.addAvatar)
 	r.GET("/users/:user/avatar", srv.getAvatar)
 	r.DELETE("/users/:user/avatar", srv.deleteAvatar)
-
-	r.GET("/users/:user/compositions", nil)
-	r.POST("/users/:user/compositions/:composition", nil)
-	r.GET("/users/:user/compositions/:composition", nil)
-	r.DELETE("/users/:user/compositions/:composition", nil)
 
 	srv.handler = r.Handler
 	return srv
