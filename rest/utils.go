@@ -12,7 +12,7 @@ const (
 
 func (srv *Service) ReadBody(ctx *fasthttp.RequestCtx, v easyjson.Unmarshaler) *errs.Error {
 	if err := easyjson.Unmarshal(ctx.PostBody(), v); err != nil {
-		panic("not implemented") //TODO
+		return srv.reqBodyErr
 	}
 	return nil
 }

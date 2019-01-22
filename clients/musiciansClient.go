@@ -144,11 +144,11 @@ func (c *MusiciansClient) UpdateMusician(id string, update *models.MusicianUpdat
 	return nil
 }
 
-func (c *MusiciansClient) DeleteMusician(id string) *errs.Error {
+func (c *MusiciansClient) DeleteMusician(id string, permanently bool) *errs.Error {
 	req := fasthttp.AcquireRequest()
 	req.Header.SetMethod(http.MethodDelete)
 
-	path := fmt.Sprintf("/musicians/%s", id)
+	path := fmt.Sprintf("/musicians/%s?permanently=%t", id, permanently)
 
 	resp, err := c.client.PerformRequest(req, path)
 	if err != nil {
