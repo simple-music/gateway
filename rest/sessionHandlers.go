@@ -27,6 +27,10 @@ func (srv *Service) startSession(ctx *fasthttp.RequestCtx) {
 
 func (srv *Service) refreshSession(ctx *fasthttp.RequestCtx) {
 	token := string(ctx.QueryArgs().Peek("refreshToken"))
+	if err := srv.tokenManager.ValidateToken(token); err != nil {
+		srv.WriteError(ctx, err)
+		return
+	}
 
 	content, err := srv.authClient.RefreshSession(token)
 	if err != nil {
@@ -41,6 +45,10 @@ func (srv *Service) refreshSession(ctx *fasthttp.RequestCtx) {
 
 func (srv *Service) deleteSession(ctx *fasthttp.RequestCtx) {
 	token := string(ctx.QueryArgs().Peek("refreshToken"))
+	if err := srv.tokenManager.ValidateToken(token); err != nil {
+		srv.WriteError(ctx, err)
+		return
+	}
 
 	if err := srv.authClient.DeleteSession(token); err != nil {
 		srv.WriteError(ctx, err)

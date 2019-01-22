@@ -54,8 +54,8 @@ func NewService() *Service {
 	r.DELETE("/users/:user", srv.WithAuth(srv.deleteUser))
 
 	r.POST("/auth/session", srv.startSession)
-	r.PATCH("/auth/session", srv.WithAuth(srv.refreshSession))
-	r.DELETE("/auth/session", srv.WithAuth(srv.deleteSession))
+	r.PATCH("/auth/session", srv.refreshSession)
+	r.DELETE("/auth/session", srv.deleteSession)
 
 	r.GET("/users/:user/subscribers", srv.getSubscribers)
 	r.GET("/users/:user/subscriptions", srv.getSubscriptions)

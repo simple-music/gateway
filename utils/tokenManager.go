@@ -11,6 +11,7 @@ import (
 type TokenManager struct {
 	key []byte
 
+	invalidTokenErr  *errs.Error
 	notAuthorizedErr *errs.Error
 }
 
@@ -18,8 +19,22 @@ func NewTokenManager() *TokenManager {
 	return &TokenManager{
 		key: []byte(config.TokenSigningKey),
 
+		invalidTokenErr:  errs.NewError(errs.NotAuthorized, "invalid token"),
 		notAuthorizedErr: errs.NewError(errs.NotAuthorized, "invalid token"),
 	}
+}
+
+func (m *TokenManager) ValidateToken(token string) *errs.Error {
+	_, err := jwt.Parse(token, func(tk *jwt.Token) (interface{}, error) {
+		if _, ok := tk.Method.(*jwt.SigningMethodHMAC); !ok {
+			return consts.EmptyString, m.invalidTokenErr
+		}
+		return m.key, nil
+	})
+	if err != nil {
+		return m.invalidTokenErr
+	}
+	return nil
 }
 
 func (m *TokenManager) ParseToken(token string) (string, *errs.Error) {
