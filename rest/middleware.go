@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	BearerLength = len("Bearer: ")
+	BearerLength = len("Bearer ")
 )
 
 func (srv *Service) WithLogs(h fasthttp.RequestHandler) fasthttp.RequestHandler {
