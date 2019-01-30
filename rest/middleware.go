@@ -1,12 +1,22 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/valyala/fasthttp"
 )
 
 const (
 	BearerLength = len("Bearer: ")
 )
+
+func (srv *Service) WithLogs(h fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		h(ctx)
+		srv.logger.Info(fmt.Sprintf("%s %s %d",
+			string(ctx.Method()), string(ctx.RequestURI()), ctx.Response.StatusCode()),
+		)
+	}
+}
 
 func (srv *Service) WithAuth(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {

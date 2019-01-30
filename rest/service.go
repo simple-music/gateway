@@ -80,7 +80,7 @@ func NewService() *Service {
 	r.GET("/users/:user/avatar", srv.getAvatar)
 	r.DELETE("/users/:user/avatar", srv.WithAuth(srv.deleteAvatar))
 
-	srv.handler = r.Handler
+	srv.handler = srv.WithLogs(r.Handler)
 	return srv
 }
 
