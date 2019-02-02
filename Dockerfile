@@ -3,8 +3,8 @@ WORKDIR /tmp/gateway
 COPY . .
 RUN go build -mod=vendor -o /tmp/service .
 
-FROM alpine:latest
+FROM ubuntu:latest
 WORKDIR /tmp
-COPY --from=base /tmp/service .
-ENTRYPOINT ./service --service_port=80
+COPY --from=base /tmp/service ./service
+CMD ./service --service_port=80
 EXPOSE 80
