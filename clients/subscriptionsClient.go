@@ -56,6 +56,26 @@ func (c *SubscriptionsClient) AddSubscription(user string, subscription string) 
 	return nil
 }
 
+func (c *SubscriptionsClient) CheckSubscription(user string, subscription string) *errs.Error {
+	req := fasthttp.AcquireRequest()
+	req.Header.SetMethod(http.MethodGet)
+
+	path := fmt.Sprintf("/users/%s/subscriptions/%s", user, subscription)
+
+	resp, err := c.client.PerformRequest(req, path)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode() == http.StatusNotFound {
+		return c.notFoundErr
+	} else if resp.StatusCode() != http.StatusOK {
+		return utils.WrapUnexpectedResponse(resp)
+	}
+
+	return nil
+}
+
 func (c *SubscriptionsClient) DeleteSubscription(user string, subscription string) *errs.Error {
 	req := fasthttp.AcquireRequest()
 	req.Header.SetMethod(http.MethodDelete)

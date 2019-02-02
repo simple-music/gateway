@@ -33,6 +33,18 @@ func (srv *Service) addSubscription(ctx *fasthttp.RequestCtx) {
 	ctx.SetStatusCode(fasthttp.StatusOK)
 }
 
+func (srv *Service) checkSubscription(ctx *fasthttp.RequestCtx) {
+	user := ctx.UserValue("user").(string)
+	subscription := ctx.UserValue("subscription").(string)
+
+	if err := srv.subscriptionsClient.CheckSubscription(user, subscription); err != nil {
+		srv.WriteError(ctx, err)
+		return
+	}
+
+	ctx.SetStatusCode(fasthttp.StatusOK)
+}
+
 func (srv *Service) deleteSubscription(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(string)
 	subscription := ctx.UserValue("subscription").(string)

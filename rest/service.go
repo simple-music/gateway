@@ -74,6 +74,7 @@ func NewService() *Service {
 	r.GET("/users/:user/subscribers", srv.getSubscribers)
 	r.GET("/users/:user/subscriptions", srv.getSubscriptions)
 	r.POST("/users/:user/subscriptions/:subscription", srv.WithAuth(srv.addSubscription))
+	r.GET("/users/:user/subscriptions/:subscription", srv.checkSubscription)
 	r.DELETE("/users/:user/subscriptions/:subscription", srv.WithAuth(srv.deleteSubscription))
 
 	r.POST("/users/:user/avatar", srv.WithAuth(srv.addAvatar))
