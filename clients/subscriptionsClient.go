@@ -89,7 +89,7 @@ func (c *SubscriptionsClient) DeleteSubscription(user string, subscription strin
 
 	if resp.StatusCode() == http.StatusNotFound {
 		return c.notFoundErr
-	} else if resp.StatusCode() != http.StatusNoContent {
+	} else if (resp.StatusCode() != http.StatusOK) && (resp.StatusCode() != http.StatusNoContent) {
 		return utils.WrapUnexpectedResponse(resp)
 	}
 
