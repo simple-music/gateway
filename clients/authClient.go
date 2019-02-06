@@ -83,6 +83,32 @@ func (c *AuthClient) DeleteCredentials(user string) *errs.Error {
 	return nil
 }
 
+func (c *AuthClient) GetAuthCode(authCode *models.AuthCode) *errs.Error {
+	req := fasthttp.AcquireRequest()
+	req.Header.SetMethod(http.MethodGet)
+
+	path := fmt.Sprintf("/clients?clientId=%s&clientSecret=%s",
+		authCode.ClientID, authCode.ClientSecret,
+	)
+
+	resp, err := c.client.PerformRequest(req, path)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode() == http.StatusNotFound {
+		return c.credentialsNotFoundErr
+	} else if resp.StatusCode() != http.StatusOK {
+		return utils.WrapUnexpectedResponse(resp)
+	}
+
+	if err := easyjson.Unmarshal(resp.Body(), authCode); err != nil {
+		return errs.NewServiceError(err)
+	}
+
+	return nil
+}
+
 func (c *AuthClient) StartSession(credentials *models.AuthCredentials) ([]byte, *errs.Error) {
 	req := fasthttp.AcquireRequest()
 
