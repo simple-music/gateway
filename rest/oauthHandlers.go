@@ -9,10 +9,10 @@ import (
 )
 
 func (srv *Service) authorizeClient(ctx *fasthttp.RequestCtx) {
-	clientID := string(ctx.PostArgs().Peek("client_id"))
-	clientSecret := string(ctx.PostArgs().Peek("client_secret"))
-	redirectURI := string(ctx.PostArgs().Peek("redirect_uri"))
-	_ = string(ctx.PostArgs().Peek("scope"))
+	clientID := string(ctx.QueryArgs().Peek("client_id"))
+	clientSecret := string(ctx.QueryArgs().Peek("client_secret"))
+	redirectURI := string(ctx.QueryArgs().Peek("redirect_uri"))
+	_ = string(ctx.QueryArgs().Peek("scope"))
 
 	authCode := models.AuthCode{
 		ClientID:     clientID,

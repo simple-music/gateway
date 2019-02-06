@@ -9,6 +9,7 @@ import (
 	"github.com/simple-music/gateway/models"
 	"github.com/simple-music/gateway/utils"
 	"github.com/valyala/fasthttp"
+	"log"
 	"net/http"
 )
 
@@ -90,6 +91,8 @@ func (c *AuthClient) GetAuthCode(authCode *models.AuthCode) *errs.Error {
 	path := fmt.Sprintf("/clients?clientId=%s&clientSecret=%s",
 		authCode.ClientID, authCode.ClientSecret,
 	)
+
+	log.Println(path)
 
 	resp, err := c.client.PerformRequest(req, path)
 	if err != nil {
