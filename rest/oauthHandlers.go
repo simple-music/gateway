@@ -1,15 +1,18 @@
 package rest
 
 import (
+	"fmt"
+	"github.com/mailru/easyjson"
+	"github.com/simple-music/gateway/errs"
 	"github.com/simple-music/gateway/models"
 	"github.com/valyala/fasthttp"
 )
 
 func (srv *Service) authorizeClient(ctx *fasthttp.RequestCtx) {
-	clientID := string(ctx.QueryArgs().Peek("client_id"))
-	clientSecret := string(ctx.QueryArgs().Peek("client_secret"))
-	redirectURI := string(ctx.QueryArgs().Peek("redirect_uri"))
-	_ = string(ctx.QueryArgs().Peek("scope"))
+	clientID := string(ctx.PostArgs().Peek("client_id"))
+	clientSecret := string(ctx.PostArgs().Peek("client_secret"))
+	redirectURI := string(ctx.PostArgs().Peek("redirect_uri"))
+	_ = string(ctx.PostArgs().Peek("scope"))
 
 	authCode := models.AuthCode{
 		ClientID:     clientID,
@@ -29,15 +32,34 @@ func (srv *Service) authorizeClient(ctx *fasthttp.RequestCtx) {
 }
 
 func (srv *Service) getOauthToken(ctx *fasthttp.RequestCtx) {
-	user := ctx.UserValue("user").(string)
-	subscription := ctx.UserValue("subscription").(string)
+	username := string(ctx.PostArgs().Peek("username"))
+	password := string(ctx.PostArgs().Peek("password"))
+	redirectURI := string(ctx.PostArgs().Peek("redirect_uri"))
 
-	if err := srv.subscriptionsClient.CheckSubscription(user, subscription); err != nil {
+	credentials := models.AuthCredentials{
+		Username: username,
+		Password: password,
+	}
+	data, err := srv.authClient.StartSession(&credentials)
+	if err != nil {
 		srv.WriteError(ctx, err)
 		return
 	}
 
-	ctx.SetStatusCode(fasthttp.StatusOK)
+	var session models.Session
+	if err := easyjson.Unmarshal(data, &session); err != nil {
+		srverr := errs.NewServiceError(err)
+		srv.WriteError(ctx, srverr)
+		return
+	}
+
+	redirectURI += fmt.Sprintf("auth_token=%s&refresh_token=%s&user_id=%s",
+		session.AuthToken, session.RefreshToken, session.UserID,
+	)
+
+	ctx.SetStatusCode(fasthttp.StatusFound)
+	ctx.Response.Header.Set("Location", redirectURI)
+	ctx.SetBody(data)
 }
 
 func createOauthForm(authCode string, redirectURI string) string {
