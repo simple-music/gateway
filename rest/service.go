@@ -71,6 +71,9 @@ func NewService() *Service {
 	r.PATCH("/auth/session", srv.refreshSession)
 	r.DELETE("/auth/session", srv.deleteSession)
 
+	r.POST("/oauth/auth", srv.authorizeClient)
+	r.POST("/oauth/token", srv.getOauthToken)
+
 	r.GET("/users/:user/subscribers", srv.getSubscribers)
 	r.GET("/users/:user/subscriptions", srv.getSubscriptions)
 	r.POST("/users/:user/subscriptions/:subscription", srv.WithAuth(srv.addSubscription))
